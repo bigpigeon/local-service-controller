@@ -1,0 +1,41 @@
+apiVersion: localservicecontroller.k8s.io/v1alpha1
+kind: LocalService
+metadata:
+  name: localservice-app
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    kind: localservice-app
+  clusterIP: None
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mylocalservice-app
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        kind: localservice-app
+    spec:
+      containers:
+        - name: app
+          image: bigpigeon0/local-service-app:latest
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          env:
+            - name: POD
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NODE
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
