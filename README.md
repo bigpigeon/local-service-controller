@@ -1,6 +1,7 @@
 ### how to run
 
 must in go module 
+
     # pull all dependency
     go get .
     go build -o local-service-controller
